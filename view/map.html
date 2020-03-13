@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>地图选点</title>
+    <script type="text/javascript" src="/MapDemo/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="/MapDemo/map/layer/layer.js"></script>
+    <script type="text/javascript" src="https://api.map.baidu.com/api?v=3.0&ak=7jdi4USRjEgntCIhjj1qdkb9tmK1nyv2"></script>
+    <script type="text/javascript">
+        var lng;
+        var lat;
+        function choosePoint() {
+            layer.open({
+                type: 1,
+                title: '地图取点',
+                btn: ['确定', '取消'],
+                btnAlign: 'c',
+                area: ['800px', '600px'],
+                content: "<div id=\"map\" style=\"width:800px;height:600px;\"></div>",
+                success: function() {
+                    var map = new BMap.Map("map", {
+                        minZoom: 12
+                    });
+                    map.centerAndZoom("北京", 12);
+                    var b = new BMap.Bounds(new BMap.Point(116.002134, 35.59034), new BMap.Point(118.087928, 36.50174));
+                    try {
+                        BMapLib.AreaRestriction.setBounds(map, b);
+                    } catch (e) {
+
+                    }
+                    map.enableScrollWheelZoom(true);
+                    map.enableDragging();
+                    map.addEventListener("click", function(e) {
+                        map.clearOverlays();
+                        lng = e.point.lng;
+                        lat = e.point.lat;
+                        var marker = new BMap.Marker(new BMap.Point(e.point.lng, e.point.lat)); // 创建点
+                        map.addOverlay(marker); //增加点
+                    });
+                },
+                yes: function(index, layero) {
+                    $("#coordinateX").val(lng);
+                    $("#coordinateY").val(lat);
+                    layer.closeAll();
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+    X: <input id="coordinateX" type="text">
+    Y: <input id="coordinateY" type="text">
+    <input type="button" value="选点" onclick="choosePoint()">
+</body>
+</html>
